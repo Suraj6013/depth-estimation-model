@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depth Estimation App</title>
+</head>
+<body>
+    <h1>Depth Estimation App</h1>
+    <form id="depthForm">
+        <!-- Add input fields and submit button as needed -->
+        <input type="text" id="inputData" name="inputData" placeholder="Input Data">
+        <button type="button" onclick="predict()">Predict</button>
+    </form>
+    <p id="result"></p>
+
+    <script>
+        // JavaScript code for making predictions
+        function predict() {
+            var inputData = document.getElementById("inputData").value;
+
+            // Make a POST request to the Flask server
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    input_data: inputData,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the result on the webpage
+                document.getElementById("result").innerHTML = 'Result: ' + data.result;
+            });
+        }
+    </script>
+</body>
+</html>
