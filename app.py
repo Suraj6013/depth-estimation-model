@@ -3,6 +3,8 @@ from tensorflow.keras.models import load_model
 import cv2
 import numpy as np
 import os
+import matplotlib.pyplot as plt
+
 
 app = Flask(__name__)
 
@@ -18,7 +20,7 @@ model = load_model(r'C:\Users\suraj\OneDrive\Desktop\Projects\depth estimation m
 def upload_predict():
     if request.method == 'POST':
         image_file = request.files['image']
-        if image_file.filename != '':  # Update this line
+        if image_file.filename != '':
             image_location = os.path.join(UPLOAD_FOLDER, image_file.filename)
             image_file.save(image_location)
             image = cv2.imread(image_location)
@@ -27,8 +29,17 @@ def upload_predict():
             image /= 255.0
             image = np.expand_dims(image, axis=0)
             prediction = model.predict(image)
-            # You can process the prediction result here
-            return render_template('index.html', prediction=prediction)
+            prediction = prediction.flatten()   # Flatten the array
+            depth_map = (prediction - prediction.min()) / (prediction.max() - prediction.min()) * 255
+            depth_map = depth_map.reshape((256, 256))  # Reshape the array to 2D
+            prediction = prediction.tolist()   # Convert the array to a list after normalization
+            # Save the depth map to a file
+            depth_map_path = os.path.join('static', 'depth_map.png')
+            plt.imsave(depth_map_path, depth_map, cmap='gray')
+            # Save the depth values to a text file
+            depth_values_path = os.path.join('static', 'depth_values.txt')
+            np.savetxt(depth_values_path, depth_map)
+            return render_template('index.html', prediction=depth_map_path)
     return render_template('index.html', prediction=None)
 
 if __name__ == '__main__':
