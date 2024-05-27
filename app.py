@@ -18,11 +18,11 @@ model = load_model(r'C:\Users\suraj\OneDrive\Desktop\Projects\depth estimation m
 def upload_predict():
     if request.method == 'POST':
         image_file = request.files['image']
-        if image_file:
+        if image_file.filename != '':  # Update this line
             image_location = os.path.join(UPLOAD_FOLDER, image_file.filename)
             image_file.save(image_location)
             image = cv2.imread(image_location)
-            image = cv2.resize(image, (256, 256))  # Update this line
+            image = cv2.resize(image, (256, 256))
             image = image.astype('float32')
             image /= 255.0
             image = np.expand_dims(image, axis=0)
