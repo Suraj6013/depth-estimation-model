@@ -1,40 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Depth Estimation App</title>
+    <title>Depth Estimation</title>
 </head>
 <body>
-    <h1>Depth Estimation App</h1>
-    <form id="depthForm">
-        <!-- Add input fields and submit button as needed -->
-        <input type="text" id="inputData" name="inputData" placeholder="Input Data">
-        <button type="button" onclick="predict()">Predict</button>
+    <h1>Depth Estimation</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="image">
+        <input type="submit" value="Predict">
     </form>
-    <p id="result"></p>
-
-    <script>
-        // JavaScript code for making predictions
-        function predict() {
-            var inputData = document.getElementById("inputData").value;
-
-            // Make a POST request to the Flask server
-            fetch('/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    input_data: inputData,
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Display the result on the webpage
-                document.getElementById("result").innerHTML = 'Result: ' + data.result;
-            });
-        }
-    </script>
+    {% if prediction %}
+    <h2>Prediction:</h2>
+    <p>{{ prediction }}</p>
+    {% endif %}
 </body>
 </html>
