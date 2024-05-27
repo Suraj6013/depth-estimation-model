@@ -9,9 +9,34 @@
         <input type="file" name="image">
         <input type="submit" value="Predict">
     </form>
+    <!--depth image-->
     {% if prediction %}
-    <h2>Prediction:</h2>
-    <p>{{ prediction }}</p>
+        <img src="{{ url_for('static', filename='depth_map.png') }}" alt="Depth Map">
     {% endif %}
+    
+    <a href="#" id="downloadLink">Download depth_values.txt</a>
+
+    <script>
+        document.getElementById('downloadLink').addEventListener('click', function() {
+            // Generate a file blob
+            fetch("{{ url_for('static', filename='depth_values.txt') }}")
+                .then(resp => resp.blob())
+                .then(blob => {
+                    // Create an object URL for the blob
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    // the filename you want
+                    a.download = 'depth_values.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    alert('Your file has downloaded!'); // or you know, something with better UX...
+                })
+                .catch(() => alert('Oh no!, something went wrong.'));
+        });
+    </script>
+    
 </body>
 </html>
